@@ -1,0 +1,1 @@
+@ powershell -executionpolicy bypass -file .\wsl-docker.ps1

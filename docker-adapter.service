@@ -1,0 +1,11 @@
+[Unit]
+Description=Docker Npipe Socket Adapter
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /root/npipe_socket_adapter.py socket-to-npipe -s /run/docker.sock -n docker_engine -v
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
