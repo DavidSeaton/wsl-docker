@@ -22,19 +22,20 @@ $onlineDistoFile = "https://releases.ubuntu.com/noble/ubuntu-24.04.3-wsl-amd64.w
 $envFilePath = ".env"
 $envVars = @{}
 
-Get-Content $envFilePath | ForEach-Object {
-    if ($_ -match '^\s*([^#][^=]+)=(.*)$') {
-        $key = $matches[1].Trim()
-        $value = $matches[2].Trim().Trim('"')
-        $envVars[$key] = $value
+if  (Test-Path $envFilePath) {
+    Get-Content $envFilePath | ForEach-Object {
+        if ($_ -match '^\s*([^#][^=]+)=(.*)$') {
+            $key = $matches[1].Trim()
+            $value = $matches[2].Trim().Trim('"')
+            $envVars[$key] = $value
+        }
+    }
+
+    # Set $wslName if found.
+    if ($envVars.ContainsKey('DOCKER_HOSTNAME')) {
+        $wslName = $envVars['DOCKER_HOSTNAME']
     }
 }
-
-# Set $wslName if found.
-if ($envVars.ContainsKey('DOCKER_HOSTNAME')) {
-    $wslName = $envVars['DOCKER_HOSTNAME']
-}
-
 
 #############################################
 # Set values
