@@ -105,21 +105,21 @@ Write-Host " -- Set Docker repository"
 wsl -d $wslName -- bash -c "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /etc/apt/keyrings/docker.gpg"
 wsl -d $wslName -- bash -c 'echo deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
 Write-Host " -- Update apt repository"
-wsl -d $wslName -- bash -c "sudo apt update"
+wsl -d $wslName -- bash -c "sudo apt-get update"  | %{ Write-Progress "apt-get update" "$_ " }; Write-Progress "." -Completed
 Write-Host " -- Install Docker"
-wsl -d $wslName -- bash -c "sudo apt install docker-ce -y"
+wsl -d $wslName -- bash -c "sudo apt-get install docker-ce -y"  | %{ Write-Progress "apt-get install docker-ce" "$_ " }; Write-Progress "." -Completed
 
 # Configure Hostname
 Write-Host " -- Install crudini"
-wsl -d $wslName -- bash -c "sudo apt install crudini -y"
+wsl -d $wslName -- bash -c "sudo apt-get install crudini -y"  | %{ Write-Progress "apt-get install crudini" "$_ " }; Write-Progress "." -Completed
 Write-Host " -- Set Hostname"
 wsl -d $wslName -- bash -c "crudini --set /etc/wsl.conf network hostname $wslName"
 
 # Perform updates and upgrades
 Write-Host " -- Install updates and upgrade packages"
-wsl -d $wslName -- bash -c "sudo apt upgrade -y"
+wsl -d $wslName -- bash -c "sudo apt-get upgrade -y"  | %{ Write-Progress "apt-get upgrade" "$_ " }; Write-Progress "." -Completed
 Write-Host " -- Remove unused packages"
-wsl -d $wslName -- bash -c "sudo apt autoremove -y"
+wsl -d $wslName -- bash -c "sudo apt-get autoremove -y"  | %{ Write-Progress "apt-get autoremove" "$_ " }; Write-Progress "." -Completed
 
 Write-Host " -- Stop WSL Distro"
 wsl -t $wslName
