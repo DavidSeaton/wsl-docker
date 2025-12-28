@@ -136,22 +136,22 @@ Write-Host ""
 # Unfortantly, I can Just use docker.cmd and docker-compose.cmd wrappers with VS Code.
 #  So instead I'm installing a socket to pipe adaptor to allow Docker CLI commands.
 
-# # Configure PATH setting for using docker.cmd and docker-compose.cmd
-# Write-Host "Configuring WSL-Docker in Environmental Path if not already set."
-# # This process uses the Registry as other methods will expand %USERPROFILE%
-# $currentDir = $PSScriptRoot
-# $regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey("Environment", $true)
-# $currentPathRaw = $regKey.GetValue("Path", "", [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
-# # Split the current PATH variable into an array of individual paths
-# $currentPathList = $currentPathRaw -split ";"
-# # Check if the current directory is not already in the array
-# if ($currentPathList -notcontains $currentDir) {
-#     $env:Path += ";" + $currentDir # Set Current Session
-#     $regKey.SetValue("Path", $currentPathRaw + ";" + $currentDir, [Microsoft.Win32.RegistryValueKind]::ExpandString) # Set Registry
-#     Write-Output "-- Added $($currentDir) to the environmental PATH variable."
-# } else {
-#     Write-Output "-- Skipped. Already in enviromental PATH variable. ( $($currentDir) )"
-# }
+# Configure PATH setting for using docker.cmd and docker-compose.cmd
+Write-Host "Configuring WSL-Docker in Environmental Path if not already set."
+# This process uses the Registry as other methods will expand %USERPROFILE%
+$currentDir = $PSScriptRoot
+$regKey = [Microsoft.Win32.Registry]::CurrentUser.OpenSubKey("Environment", $true)
+$currentPathRaw = $regKey.GetValue("Path", "", [Microsoft.Win32.RegistryValueOptions]::DoNotExpandEnvironmentNames)
+# Split the current PATH variable into an array of individual paths
+$currentPathList = $currentPathRaw -split ";"
+# Check if the current directory is not already in the array
+if ($currentPathList -notcontains $currentDir) {
+    $env:Path += ";" + $currentDir # Set Current Session
+    $regKey.SetValue("Path", $currentPathRaw + ";" + $currentDir, [Microsoft.Win32.RegistryValueKind]::ExpandString) # Set Registry
+    Write-Output "-- Added $($currentDir) to the environmental PATH variable."
+} else {
+    Write-Output "-- Skipped. Already in enviromental PATH variable. ( $($currentDir) )"
+}
 
 
 Write-Host "Configure Named Pipe Mapping to enable communication between Windows"
@@ -166,6 +166,7 @@ wsl -d $wslName -- bash -c "sudo systemctl enable --now docker-adapter.service"
 
 Write-Host "Install Docker CLI"
 winget install Docker.DockerCLI
+winget install Docker.DockerCompose
 
 # Write-Host "Install Podman CLI (alternative)"
 # winget install RedHat.Podman-Desktop
